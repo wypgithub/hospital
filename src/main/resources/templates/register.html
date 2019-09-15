@@ -1,0 +1,298 @@
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+
+
+<title>现场挂号</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+    <style>
+        .col-sm-1{
+            width: 10%;
+        }
+    </style>
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="row cl">
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>发票号：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input type="text" class="input-text" value="" placeholder="" id="invoice_no">
+			</div>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input class="btn btn-primary radius" type="button" id="submit_btn" value="&nbsp;&nbsp;挂号&nbsp;&nbsp;">
+			</div>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;清空&nbsp;&nbsp;">
+			</div>			
+			<label class="form-label col-xs-5 col-sm-5"></label>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-1 col-sm-1">挂号信息</label>
+			<label class="form-label col-xs-11 col-sm-11"></label>
+		</div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>病历号：</label>
+            <div class="formControls col-xs-2 col-sm-2">
+                <input type="text" class="input-text" value="" placeholder="" id="medical_record_num" >
+            </div>
+            <label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>姓名：</label>
+            <div class="formControls col-xs-2 col-sm-2">
+                <input type="text" class="input-text" value="" placeholder="" id="pat_name" >
+            </div>
+            <label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>性别：</label>
+            <div class="formControls col-xs-2 col-sm-2"  style="width: 12%">
+				<span class="select-box"><select class="select" id="gender">
+					<option value="71">男</option>
+					<option value="72">女</option>
+				</select></span>
+            </div>
+            <label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>年龄：</label>
+            <div class="formControls col-xs-1 col-sm-1" style="width: 7%">
+                <input type="text" class="input-text" placeholder="" id="pat_age" >
+            </div>
+            <div class="formControls col-xs-1 col-sm-1" style="width: 7%">
+				  <span class="select-box"><select class="select" id="age_type">
+				 <option value="0">岁</option>
+			     <option value="1">月</option>
+			     <option value="2">日</option>
+				</select></span>
+            </div>
+        </div>
+
+        <div class="row cl">
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>出生日期：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input type="text" onfocus="WdatePicker({ maxDate:'#F{\'%y-%M-%d\'}' })" id="date_of_birth" class="input-text Wdate" style="width:100%;">
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>身份证号：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input type="text" class="input-text" value="" placeholder="" id="id_num" >
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>家庭住址：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input type="text" class="input-text" value="" placeholder="" id="address">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>结算类别：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<span class="select-box"><select class="select" id="billing_category">
+					<option value="1">资费</option>
+					<option value="2">报销</option>
+					<option value="3">免费</option>
+				</select></span>
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>看诊日期：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input type="text" onfocus="WdatePicker({ maxDate:'#F{\'%y-%M-%d\'}' })" id="regDate" class="input-text Wdate" style="width:100%;">
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>午别：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<span class="select-box"><select class="select" id="noon">
+					<option value="am">上午</option>
+					<option value="pm">下午</option>
+				</select></span>
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>挂号科室：</label>
+			<div class="formControls col-xs-2 col-sm-2" style="width: 10%">
+				<span class="select-box">
+					<select class="select" id="depId"></select>
+				</span>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>号别：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<span class="select-box"><select class="select" id="regLevel"></select></span>
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>看诊医生：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+					<span class="select-box"><select class="select" id="docId">
+					<option>资费</option>
+					<option>报销</option>
+				</select></span>
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>初始号额：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input type="text" class="input-text" value="" placeholder="" id="initNum" >
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>已用号额：</label>
+			<div class="formControls col-xs-2 col-sm-2" style="width: 10%">
+				<input type="text" class="input-text" value="" placeholder="" id="username" >
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>病历本：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input type="checkbox" id="needMedicalRecord">
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>应该收金额：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+				<input type="text" class="input-text" value="" placeholder="" id="amount" >
+			</div>
+			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>收费方式：</label>
+			<div class="formControls col-xs-2 col-sm-2">
+			<span class="select-box">
+					<select class="select" id="payType">
+						<option>现金</option>
+						<option>报销</option>
+					</select>
+				</span>
+			</div>
+		</div>
+	</form>
+</article>
+
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript">
+$(function(){
+    $("#submit_btn").click(function () {
+        var medical_record_num = $("#medical_record_num").val()
+        var pat_name = $("#pat_name").val()
+        var gender = $("#gender").val()
+
+        var pat_age = $("#pat_age").val()
+        var age_type = $("#age_type").val()
+        var date_of_birth = $("#date_of_birth").val()
+        var id_num = $("#id_num").val()
+        var address = $("#address").val()
+        var billing_category = $("#billing_category").val()
+        var regDate = $("#regDate").val()
+
+        var noon = $("#noon").val()
+        var depId = $("#depId").val()
+        var docId = $("#docId").val()
+        var regLevel = $("#regLevel").val()
+        var needMedicalRecord = $("#needMedicalRecord").is(':checked')
+		var record = {
+
+            medicalRecordNum: medical_record_num,
+
+            noon: noon,
+            depId: depId,
+            docId: docId,
+            regLevel: regLevel,
+
+            billingCategoryID: billing_category,
+            needMedicalRecord: needMedicalRecord,
+            docId: docId,
+            regLevel: regLevel
+
+		}
+
+        $.ajax({
+            type:'post',
+            url:'saveRegistrationRecord',
+			data:JSON.stringify(record),
+            success:function (data) {
+                layer.alert('操作成功')
+            }
+        })
+    })
+
+
+
+
+    $("#medical_record_num").blur(function () {
+		var medical_record_num = $.trim($("#medical_record_num").val())
+		if (medical_record_num == ''){
+            layer.alert('请输入病历号')
+            return
+		}
+        $.ajax({
+            url:'checkRegistrationNum',
+            type:'post',
+            data:{medicalRecordNum:  medical_record_num},
+            success:function (patient) {
+                if (patient){
+                   $("#pat_name").val(patient.patName)
+                    if(patient.gender == '72'){
+                        $("#gender").find('option:eq(1)').prop("selected", true);
+                    }
+                    $("#pat_age").val(patient.patAge)
+                    $("#age_type").find('option').eq(parseInt(patient.ageType)).prop("selected", true);
+                    $("#date_of_birth").val(patient.dateOfBirth.substr(0,10))
+                    $("#id_num").val(patient.idNum)
+                    $("#address").val(patient.address)
+                }
+            }
+        })
+    })
+
+    bindRegLevelListener()
+    bindDepartmentListener()
+
+
+	function bindRegLevelListener() {
+        $.ajax({
+            type:'get',
+            url:'findAllRegLevel',
+            success:function (data) {
+                if (!data || data.length == 0){
+                    return
+				}
+				var $regLevel = $("#regLevel")
+                data.forEach(function (regLevel, index) {
+                    $regLevel.append($("<option value="+index+">"+regLevel.levelName+"</option>"))
+                })
+
+                $regLevel.change(function () {
+                    var regLevel = data[$(this).val()]
+
+					$("#amount").val(regLevel.regFee)
+                })
+            }
+        })
+    }
+
+    function bindDepartmentListener() {
+        $.ajax({
+            type:'get',
+            url:'findAllDepartment',
+            success:function (data) {
+                var departmentArray = data[0]
+                var doctorArray = data[1]
+
+
+                var $depId = $("#depId")
+                departmentArray.forEach(function (department) {
+                    $depId.append($("<option value="+department.depId+">"+department.depName+"</option>"))
+                })
+
+                var $docId = $("#docId")
+                $depId.change(function () {
+                    var depId = $(this).val()
+                    doctorArray.forEach(function (doctor) {
+                        if (doctor.depId == depId){
+                            $docId.append($("<option value="+doctor.user_id+">"+doctor.userName+"</option>"))
+						}
+                    })
+                })
+            }
+        })
+    }
+});
+</script> 
+</body>
+</html>
