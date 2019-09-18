@@ -5,13 +5,17 @@ import com.example.hospital.po.Department;
 import com.example.hospital.po.Patient;
 import com.example.hospital.po.RegLevel;
 import com.example.hospital.po.RegistrationRecord;
+import com.example.hospital.vo.RegistrationVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED)
 public class RegistrationServiceImpl implements RegistrationService {
 
     @Resource
@@ -34,21 +38,22 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public void saveRegistrationRecord(RegistrationRecord record) {
-        record.setRegDate(new Date());
+    public void saveRegistrationRecord(RegistrationVO registrationVO) {
+        Patient patient = registrationVO.getPatient();
+        RegistrationRecord record = registrationVO.getRecord();
 
-        Patient patient = registrationRecordDao.findByMedicalRecordNum(record.getMedicalRecordNum());
-        if (patient == null){
-            record.setRegStatus("0");
-
+        if (patient != null){
             registrationRecordDao.savePatient(patient);
 
-        }else {
             record.setRegStatus("1");
+            record.setMedicalRecordNum(patient.getMedicalRecordNum());
+        }else {
+            record.setRegStatus("0");
         }
 
         registrationRecordDao.saveRegistrationRecord(record);
     }
+
 
 
 }
