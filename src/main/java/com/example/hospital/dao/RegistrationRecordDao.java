@@ -26,6 +26,7 @@ public interface RegistrationRecordDao {
 
     @Select("select * from reg_level where delete_tag = 1")
     @Results({
+            @Result(property = "levelId", column = "level_id"),
             @Result(property = "levelName", column = "level_name"),
             @Result(property = "regFee", column = "reg_fee"),
             @Result(property = "regQuota", column = "reg_quota")
@@ -40,7 +41,7 @@ public interface RegistrationRecordDao {
     })
     List<Department> findAllDepartment();
 
-    @Select("select dep_id,user_name from hospital_user")
+    @Select("select dep_id,user_name,user_id from hospital_user")
     @Results({
             @Result(property = "depId", column = "dep_id"),
             @Result(property = "userId", column = "user_id"),
@@ -50,10 +51,14 @@ public interface RegistrationRecordDao {
 
     @Insert("INSERT INTO patient VALUES(#{medicalRecordNum},#{patName},#{gender},#{idNum},#{dateOfBirth},#{patAge}," +
             "#{ageType},#{address})")
+    @Options(useGeneratedKeys = true, keyProperty = "medicalRecordNum", keyColumn = "medical_record_num")
     int savePatient(Patient patient);
 
-    @Insert("INSERT INTO registration_record VALUES(#{regId},#{medicalRecordNum},#{noon},#{regDate},#{depId},#{docId}," +
+    @Insert("INSERT INTO registration_record (medical_record_num,noon,reg_date,dep_id,doc_id,reg_level,billing_category_ID," +
+            "need_medical_record,reg_staff_id,reg_status)" +
+            " VALUES (#{medicalRecordNum},#{noon},#{regDate,jdbcType=TIMESTAMP},#{depId},#{docId}," +
             "#{regLevel},#{billingCategoryID},#{needMedicalRecord},#{regStaffId},#{regStatus})")
+    @Options(useGeneratedKeys = true, keyProperty = "regId", keyColumn = "reg_id")
     int saveRegistrationRecord(RegistrationRecord record);
 
 }

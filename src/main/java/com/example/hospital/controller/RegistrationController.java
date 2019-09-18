@@ -5,6 +5,7 @@ import com.example.hospital.po.Patient;
 import com.example.hospital.po.RegLevel;
 import com.example.hospital.po.RegistrationRecord;
 import com.example.hospital.service.RegistrationService;
+import com.example.hospital.vo.RegistrationVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +43,8 @@ public class RegistrationController extends BaseController{
 
     @ResponseBody
     @RequestMapping("/saveRegistrationRecord")
-    public void saveRegistrationRecord(@RequestBody RegistrationRecord record) {
-        record.setRegStaffId(getCurrentUser().getUserId());
-        registrationService.saveRegistrationRecord(record);
+    public void saveRegistrationRecord(@RequestBody RegistrationVO registrationVO) {
+        registrationVO.getRecord().setRegStaffId(getCurrentUser().getUserId());
+        registrationService.saveRegistrationRecord(registrationVO);
     }
 }

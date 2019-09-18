@@ -36,7 +36,7 @@
 			</div>
 			<div class="formControls col-xs-2 col-sm-2">
 				<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;清空&nbsp;&nbsp;">
-			</div>			
+			</div>
 			<label class="form-label col-xs-5 col-sm-5"></label>
 		</div>
 		<div class="row cl">
@@ -123,10 +123,9 @@
 			</div>
 			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>看诊医生：</label>
 			<div class="formControls col-xs-2 col-sm-2">
-					<span class="select-box"><select class="select" id="docId">
-					<option>资费</option>
-					<option>报销</option>
-				</select></span>
+					<span class="select-box">
+						<select class="select" id="docId"></select>
+					</span>
 			</div>
 			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>初始号额：</label>
 			<div class="formControls col-xs-2 col-sm-2">
@@ -167,75 +166,86 @@
 <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
 <script type="text/javascript">
 $(function(){
+    function validate(obj){
+        for (var key in obj) {
+            if ($.trim(obj[key]) == ''){
+                layer.alert('输入不能为空')
+				return false;
+			}
+		}
+        return true;
+	}
     $("#submit_btn").click(function () {
-        var medical_record_num = $("#medical_record_num").val()
-        var pat_name = $("#pat_name").val()
-        var gender = $("#gender").val()
-
-        var pat_age = $("#pat_age").val()
-        var age_type = $("#age_type").val()
-        var date_of_birth = $("#date_of_birth").val()
-        var id_num = $("#id_num").val()
-        var address = $("#address").val()
-        var billing_category = $("#billing_category").val()
-        var regDate = $("#regDate").val()
-
-        var noon = $("#noon").val()
-        var depId = $("#depId").val()
-        var docId = $("#docId").val()
-        var regLevel = $("#regLevel").val()
-        var needMedicalRecord = $("#needMedicalRecord").is(':checked')
+        var patient = {
+            patName: $("#pat_name").val(),
+            gender: $("#gender").val(),
+            patAge: $("#pat_age").val(),
+            ageType: $("#age_type").val(),
+            idNum: $("#id_num").val(),
+            dateOfBirth: $("#date_of_birth").val(),
+            address: $("#address").val(),
+		}
 		var record = {
+            noon: $("#noon").val(),
+            depId: $("#depId").val(),
+            docId: $("#docId").val(),
+            regDate:$("#regDate").val(),
+            regLevel: $("#regLevel").val(),
+            billingCategoryID: $("#billing_category").val(),
+            needMedicalRecord: $("#needMedicalRecord").is(':checked')? 1 : 0
+		}
+		//界面输入非空检查
+        if (!validate(patient) || !validate(record)){
+            return
+        }
 
-            medicalRecordNum: medical_record_num,
-
-            noon: noon,
-            depId: depId,
-            docId: docId,
-            regLevel: regLevel,
-
-            billingCategoryID: billing_category,
-            needMedicalRecord: needMedicalRecord,
-            docId: docId,
-            regLevel: regLevel
-
+        var medical_record_num = $("#medical_record_num").val()
+        if($.trim(medical_record_num) != ''){
+            patient = null
+            record.medicalRecordNum = medical_record_num
 		}
 
         $.ajax({
             type:'post',
+            contentType: "application/json",
             url:'saveRegistrationRecord',
-			data:JSON.stringify(record),
+			data:JSON.stringify({record: record, patient: patient}),
             success:function (data) {
-                layer.alert('操作成功')
+                layer.alert('挂号成功')
             }
         })
     })
 
-
-
-
     $("#medical_record_num").blur(function () {
-		var medical_record_num = $.trim($("#medical_record_num").val())
+        var $medical_record_num = $("#medical_record_num");
+		var medical_record_num = $.trim($medical_record_num.val())
 		if (medical_record_num == ''){
             layer.alert('请输入病历号')
             return
 		}
+        if (!/^[0-9]*$/.test(medical_record_num)){
+            layer.alert('病历号格式错误')
+            return
+        }
         $.ajax({
             url:'checkRegistrationNum',
             type:'post',
             data:{medicalRecordNum:  medical_record_num},
             success:function (patient) {
-                if (patient){
-                   $("#pat_name").val(patient.patName)
-                    if(patient.gender == '72'){
-                        $("#gender").find('option:eq(1)').prop("selected", true);
-                    }
-                    $("#pat_age").val(patient.patAge)
-                    $("#age_type").find('option').eq(parseInt(patient.ageType)).prop("selected", true);
-                    $("#date_of_birth").val(patient.dateOfBirth.substr(0,10))
-                    $("#id_num").val(patient.idNum)
-                    $("#address").val(patient.address)
+                if (!patient){
+                    layer.alert('该病历号不存在,请输入正确病历号')
+                    $medical_record_num.val('')
+                    return
+				}
+                $("#pat_name").val(patient.patName)
+                if(patient.gender == '72'){
+                    $("#gender").find('option:eq(1)').prop("selected", true);
                 }
+                $("#pat_age").val(patient.patAge)
+                $("#age_type").find('option').eq(parseInt(patient.ageType)).prop("selected", true);
+                $("#date_of_birth").val(patient.dateOfBirth.substr(0,10))
+                $("#id_num").val(patient.idNum)
+                $("#address").val(patient.address)
             }
         })
     })
@@ -253,15 +263,19 @@ $(function(){
                     return
 				}
 				var $regLevel = $("#regLevel")
-                data.forEach(function (regLevel, index) {
-                    $regLevel.append($("<option value="+index+">"+regLevel.levelName+"</option>"))
+                data.forEach(function (regLevel) {
+                    $regLevel.append($("<option value="+regLevel.levelId+">"+regLevel.levelName+"</option>"))
                 })
 
                 $regLevel.change(function () {
-                    var regLevel = data[$(this).val()]
-
-					$("#amount").val(regLevel.regFee)
+                    var levelId = $(this).val()
+					var amount = data.find(function (reg) {
+						return reg.levelId = levelId
+                    }).regFee
+					$("#amount").val(amount)
                 })
+				//初始触发设置初始金额
+                $regLevel.trigger('change')
             }
         })
     }
@@ -274,7 +288,6 @@ $(function(){
                 var departmentArray = data[0]
                 var doctorArray = data[1]
 
-
                 var $depId = $("#depId")
                 departmentArray.forEach(function (department) {
                     $depId.append($("<option value="+department.depId+">"+department.depName+"</option>"))
@@ -282,17 +295,20 @@ $(function(){
 
                 var $docId = $("#docId")
                 $depId.change(function () {
+                    $docId.empty()
                     var depId = $(this).val()
                     doctorArray.forEach(function (doctor) {
                         if (doctor.depId == depId){
-                            $docId.append($("<option value="+doctor.user_id+">"+doctor.userName+"</option>"))
+                            $docId.append($("<option value="+doctor.userId+">"+doctor.userName+"</option>"))
 						}
                     })
                 })
+				//初始触发可是下拉框change事件来初始医生下拉框
+                $depId.trigger('change')
             }
         })
     }
 });
-</script> 
+</script>
 </body>
 </html>

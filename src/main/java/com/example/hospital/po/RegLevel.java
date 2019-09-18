@@ -1,10 +1,18 @@
 package com.example.hospital.po;
 
 public class RegLevel {
-
+    private Integer levelId;
     private String levelName;
     private Float regFee;//挂号费
     private Float regQuota;//挂号限额
+
+    public Integer getLevelId() {
+        return levelId;
+    }
+
+    public void setLevelId(Integer levelId) {
+        this.levelId = levelId;
+    }
 
     public String getLevelName() {
         return levelName;

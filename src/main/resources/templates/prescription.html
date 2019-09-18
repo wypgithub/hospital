@@ -28,6 +28,13 @@
             padding-left: 5px;
             background-color: #6dbfff;
         }
+        .drug_btn{
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        .table td{
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -101,12 +108,10 @@
     <div class="row cl pat_information">
         处方药品明细
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20">
-             <span class="l">
-            <a class="btn btn-primary radius" id="addDrug" href="javascript:;">
-                <i class="Hui-iconfont">&#xe600;</i> 添加药品
-            </a>
-        </span>
+    <div class="formControls col-xs-2 col-sm-2" >
+        <a class="btn btn-primary radius drug_btn" id="addDrug" href="javascript:;">
+          添加药品
+        </a>
     </div>
 
     <table class="table table-border table-bordered table-bg table-hover table-sort table-responsive">
@@ -119,10 +124,18 @@
             <th width="30">用量</th>
             <th width="80">频次</th>
             <th width="50">数量</th>
+            <th width="50">操作</th>
         </tr>
         </thead>
         <tbody></tbody>
     </table>
+
+    <div class="formControls col-xs-2 col-sm-2" >
+        <a class="btn btn-primary radius drug_btn" id="saveDrug" href="javascript:;">
+            添加处方
+        </a>
+    </div>
+
     <div class="formControls col-xs-2 col-sm-2" >
         <br><br>
         <input class="btn btn-primary radius" style="display: none" type="button" id="submit_btn" value="&nbsp;&nbsp;收费结算&nbsp;&nbsp;">
@@ -138,7 +151,7 @@
         <div class="row cl">
             <label class="form-label col-xs-3 col-xs-3">用法：</label>
             <div class="formControls col-xs-2 col-sm-6">
-                <input type="text" class="input-text" id="pat_name_charge" >
+                <input type="text" class="input-text" id="use_method" >
             </div>
         </div>
         <div class="row cl">
@@ -170,12 +183,17 @@
 <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
 <script type="text/javascript" src="static/h-ui/js/jquery.combo.select.js"></script>
 <script type="text/javascript">
+    var drugList = []
+    var medicalRecordNum;
 
     $(function(){
         initDrugList();
 
-        var drugList = []
         $("#addDrug").click(function () {
+            if (!medicalRecordNum){
+                layer.alert('请先查询患者病历')
+                return
+            }
             layer.open({
                 type: 1,
                 title:'添加处方药品',
@@ -183,39 +201,44 @@
                 btn: [ '确定', '取消'],
                 content: $('#drug_choose'),
                 yes:function () {
+                    var drugArray = $("#drug_name").val().split('_')
+                    var drugId = drugArray[0]
+                    var drugSpeciFi = drugArray[1]
+                    var packUnit = drugArray[2]
                     var prescription = {
-                        drugName: $("#drug_name").val(),
-                        drugUsage: $("#drug_usage").val(),
-                        drug_dosage: $("#drug_dosage").val(),
-                        drug_frequency: $("#drug_frequency").val(),
-                        drug_num: $("#drug_num").val(),
+                        drugId: drugId,
+                        useMethod: $("#use_method").val(),
+                        drugDosage: $("#drug_dosage").val(),
+                        frequency: $("#drug_frequency").val(),
+                        amount: $("#drug_num").val(),
+                        mPreStatus: '0'
                     }
                     for (var key in prescription){
+                        prescription[key] = $.trim(prescription[key])
                         if($.trim(prescription[key]) == ''){
                             layer.alert('输入不能为空')
                             return
                         }
                     }
-
                     drugList.push(prescription)
-                    var trHtml = '<tr><td>@drugName</td><td>@drugSpeciFi</td><td>@packUnit</td><td>@drugUnitPrice</td><td>@use_method</td><td>@Dosage</td><td>@frequency</td><td>@amount</td></tr>'
-                        .replace('@medical_record_num', medical_record_num)
-                        .replace('@userName', patient.patName)
-                        .replace('@drugName', drug.drugName)
-                        .replace('@drugPrice', drug.drugPrice)
-                        .replace('@drugNum', drug.drugNum)
-                        .replace('@createTime', drug.createTime.substring(0, 10))
-                        .replace('@status', drug.status == '0'? '已开立' : drug.status == '1'? '已付款': '发生退费')
+                    var trHtml = '<tr><td>@drugName</td><td>@drugSpeciFi</td><td>@packUnit</td><td>@useMethod</td><td>@drugDosage</td><td>@frequency</td><td>@amount</td><td class="f-14 td-manage"><a style="text-decoration:none" class="ml-5" onClick="drugDel(this)" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>'
+                        .replace('@drugName', $("#drug_name").find("option:selected").text())
+                        .replace('@drugSpeciFi', drugSpeciFi)
+                        .replace('@packUnit', packUnit)
+                      /*  .replace('@drugUnitPrice', drugUnitPrice)*/
+                        .replace('@useMethod', prescription.useMethod)
+                        .replace('@drugDosage', prescription.drugDosage)
+                        .replace('@frequency', prescription.frequency)
+                        .replace('@amount', prescription.amount)
                     $("tbody").append(trHtml)
+
+                    layer.closeAll()
                 }
             });
         })
 
-
-
-        var medical_record_num;
         $("#search_btn").click(function () {
-            medical_record_num = $.trim($("#medical_record_num").val())
+            var medical_record_num = $.trim($("#medical_record_num").val())
             if (medical_record_num == '') {
                 layer.alert('请输入病历号')
                 return
@@ -233,10 +256,12 @@
                         layer.alert('无患者病历记录')
                         return
                     }
+
+                    medicalRecordNum = medical_record_num
+
                     $("#pat_name").text(data.patName)
                     $("#gender").text(data.gender)
                     $("#pat_age").text(data.patAge)
-
                     $("#chiefComplaint").text(data.chiefComplaint)
                     $("#curMedHistory").text(data.curMedHistory)
                     $("#curTreatmentSitua").text(data.curTreatmentSitua)
@@ -247,47 +272,27 @@
             })
         })
         //应收金额
-        var amount = 0
-        $("#submit_btn").click(function () {
-            $("input[name=drug]:checked").each(function () {
-                var $tr = $(this).parents('tr');
-                var price = parseInt($tr.find('td :eq(4)').text())
-                var num = parseInt($tr.find('td :eq(5)').text())
-                amount += price * num
-            });
-
-            $("#total_amount").val(amount)
-
-            layer.open({
-                type: 1,
-                title:'发票信息(交费)',
-                area: ['600px', '300px'],
-                btn: [ '收费', '取消'],
-                content: $('#charge_di'),
-                yes:function () {
-                    var refundRecord = {
-                        medicalRecordNum: medical_record_num,
-                        invoiceNum: $("#invoice_num").val(),
-                        costCategory: '2',
-                        totalAmount: amount,
-                        paymentMethod: $("#payment_method").val()
-                    }
-                    $.ajax({
-                        type:'post',
-                        url:'charge',
-                        contentType: "application/json",
-                        data:JSON.stringify(refundRecord),
-                        success:function (data) {
-                            layer.alert('收费成功')
-                            layer.closeAll()
-                            //刷新
-                            //$("#search_btn").click()
-                        }
-                    })
+        $("#saveDrug").click(function () {
+            if (!medicalRecordNum){
+                layer.alert('请先查询患者病历')
+                return
+            }
+           var medicinePrescription = {
+               medicalRecordNum: medicalRecordNum,
+               mPreStatus: '0'
+           }
+            $.ajax({
+                type:'post',
+                url:'saveMedicinePrescription',
+                contentType: "application/json",
+                data:JSON.stringify({medicinePrescription: medicinePrescription,medicinePrescriptionDetail: drugList}),
+                success:function () {
+                    layer.alert('处方开立成功', { icon: 1, closeBtn: 0 }, function (index) {
+                        layer.closeAll()
+                    });
                 }
-            });
+            })
         });
-
 
         /**
          * 查询药品初始化选择框
@@ -299,13 +304,18 @@
                 success:function (data) {
                     var $drug_name = $("#drug_name")
                     data.forEach(function (drug) {
-                        $drug_name.append($("<option value="+drug.drugId+">"+drug.drugName+"</option>"))
+                        var value = drug.drugId + '_' + drug.drugSpeciFi + '_' + drug.packUnit + '_' + drug.drugUnitPrice
+                        $drug_name.append($("<option value="+ value +">"+drug.drugName+"</option>"))
                     })
                     $drug_name.comboSelect();
                 }
             })
         }
     });
+    function drugDel(obj){
+        drugList.splice($(obj).index(), 1)
+        $(obj).parents("tr").remove();
+    }
 </script>
 </body>
 </html>
