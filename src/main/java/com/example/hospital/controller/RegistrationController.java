@@ -44,6 +44,7 @@ public class RegistrationController extends BaseController{
     @ResponseBody
     @RequestMapping("/saveRegistrationRecord")
     public void saveRegistrationRecord(@RequestBody RegistrationVO registrationVO) {
+        registrationVO.getRefundRecord().setUserId(getCurrentUser().getUserId());
         registrationVO.getRecord().setRegStaffId(getCurrentUser().getUserId());
         registrationService.saveRegistrationRecord(registrationVO);
     }

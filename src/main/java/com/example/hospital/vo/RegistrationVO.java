@@ -1,6 +1,7 @@
 package com.example.hospital.vo;
 
 import com.example.hospital.po.Patient;
+import com.example.hospital.po.PaymentRefundRecord;
 import com.example.hospital.po.RegistrationRecord;
 
 /**
@@ -12,6 +13,8 @@ public class RegistrationVO {
     private Patient patient;
 
     private RegistrationRecord record;
+
+    private PaymentRefundRecord refundRecord;
 
     public Patient getPatient() {
         return patient;
@@ -27,5 +30,13 @@ public class RegistrationVO {
 
     public void setRecord(RegistrationRecord record) {
         this.record = record;
+    }
+
+    public PaymentRefundRecord getRefundRecord() {
+        return refundRecord;
+    }
+
+    public void setRefundRecord(PaymentRefundRecord refundRecord) {
+        this.refundRecord = refundRecord;
     }
 }

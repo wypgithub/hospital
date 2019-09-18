@@ -27,17 +27,16 @@
 <article class="page-container">
 	<form action="" method="post" class="form form-horizontal" id="form-member-add">
 		<div class="row cl">
-			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>发票号：</label>
+			<label class="form-label col-xs-1 col-sm-1">发票号：</label>
 			<div class="formControls col-xs-2 col-sm-2">
-				<input type="text" class="input-text" value="" placeholder="" id="invoice_no">
+				<input type="text" class="input-text" value="" placeholder="" id="invoice_num">
 			</div>
-			<div class="formControls col-xs-2 col-sm-2">
+			<div class="formControls col-xs-2 col-sm-1">
 				<input class="btn btn-primary radius" type="button" id="submit_btn" value="&nbsp;&nbsp;挂号&nbsp;&nbsp;">
 			</div>
-			<div class="formControls col-xs-2 col-sm-2">
+			<div class="formControls col-xs-1 col-sm-1">
 				<input class="btn btn-primary radius" type="reset" value="&nbsp;&nbsp;清空&nbsp;&nbsp;">
 			</div>
-			<label class="form-label col-xs-5 col-sm-5"></label>
 		</div>
 		<div class="row cl">
 			<label class="form-label col-xs-1 col-sm-1">挂号信息</label>
@@ -92,7 +91,7 @@
 			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>结算类别：</label>
 			<div class="formControls col-xs-2 col-sm-2">
 				<span class="select-box"><select class="select" id="billing_category">
-					<option value="1">资费</option>
+					<option value="1">自费</option>
 					<option value="2">报销</option>
 					<option value="3">免费</option>
 				</select></span>
@@ -149,9 +148,10 @@
 			<label class="form-label col-xs-1 col-sm-1"><span class="c-red">*</span>收费方式：</label>
 			<div class="formControls col-xs-2 col-sm-2">
 			<span class="select-box">
-					<select class="select" id="payType">
-						<option>现金</option>
-						<option>报销</option>
+					<select class="select" id="payment_method">
+						<option value="0">现金</option>
+						<option value="1">微信</option>
+						<option value="2">支付宝</option>
 					</select>
 				</span>
 			</div>
@@ -204,12 +204,17 @@ $(function(){
             patient = null
             record.medicalRecordNum = medical_record_num
 		}
-
+        var refundRecord = {
+            costCategory: '0',
+            invoiceNum: $("#invoice_num").val(),
+            totalAmount: $("#amount").val(),
+            paymentMethod: $("#payment_method").val()
+        }
         $.ajax({
             type:'post',
             contentType: "application/json",
             url:'saveRegistrationRecord',
-			data:JSON.stringify({record: record, patient: patient}),
+			data:JSON.stringify({record: record, patient: patient, refundRecord: refundRecord}),
             success:function (data) {
                 layer.alert('挂号成功')
             }

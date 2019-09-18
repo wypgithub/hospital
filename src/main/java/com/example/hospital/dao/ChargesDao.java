@@ -29,7 +29,7 @@ public interface ChargesDao {
     })
     List<DrugVO> findDrugList(Integer medicalRecordNum);
 
-    @Select("select reg_id from registration_record where medical_record_num = #{medicalRecordNum}")
+    @Select("select reg_id from registration_record where medical_record_num = #{medicalRecordNum} ORDER BY reg_date DESC LIMIT 1")
     Integer findRegId(Integer medicalRecordNum);
 
     @Insert("INSERT INTO payment_refund_record (reg_id,invoice_num,charge_item_id,cost_category,total_amount," +

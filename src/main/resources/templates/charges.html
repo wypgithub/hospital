@@ -208,7 +208,6 @@
                 amount += price * num
             });
 
-
              $("#total_amount").val(amount)
 
             layer.open({
@@ -231,7 +230,8 @@
                         contentType: "application/json",
                         data:JSON.stringify(refundRecord),
                         success:function (data) {
-                            layer.alert('收费成功', { icon: 1, closeBtn: 0 }, function (index) {
+                            layer.alert('收费成功', { icon: 1, closeBtn: 0 }, function () {
+                                //$("#search_btn").click()
                                 layer.closeAll()
                             });
                         }
